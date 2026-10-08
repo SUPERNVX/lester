@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-black text-amber-50 selection:bg-amber-500 selection:text-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Átomo de Hidrogênio - Dither Dourado</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Three.js r128 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      overflow-x: hidden;
+      background-color: #000000;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    .serif-title {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Custom Retro Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #78350f;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d97706;
+    }
+
+    /* Subtle Glassmorphism borders */
+    .gold-border {
+      border: 1px solid rgba(217, 119, 6, 0.3);
+    }
+    .gold-border:hover {
+      border-color: rgba(251, 191, 36, 0.6);
+    }
+
+    /* Glow effect for titles */
+    .gold-glow {
+      text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-black text-amber-100 min-h-screen relative overflow-x-hidden">
+
+  <!-- Canvas 3D Fullscreen Fixed Container -->
+  <div id="canvas-container" class="fixed inset-0 z-0 pointer-events-auto cursor-grab active:cursor-grabbing"></div>
+
+  <!-- Header Minimalist HUD Bar -->
+  <header class="fixed top-0 left-0 right-0 z-30 p-4 md:p-6 flex justify-between items-center pointer-events-none bg-gradient-to-b from-black/80 via-black/30 to-transparent">
+    <div class="flex items-center space-x-3 pointer-events-auto">
+      <div class="w-8 h-8 rounded-lg bg-amber-950/80 border gold-border flex items-center justify-center text-amber-400 font-bold font-mono text-sm shadow-lg shadow-amber-950/50">
+        ¹H
+      </div>
+      <div>
+        <h1 class="text-xs md:text-sm font-bold tracking-widest text-amber-300 uppercase serif-title gold-glow">Hidrogênio Dither</h1>
+        <p id="hud-phase-title" class="text-[9px] text-amber-500 font-mono tracking-wider">FASE 1: EXPANSÃO ATÔMICA</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Control Buttons -->
+    <div class="flex items-center space-x-2 pointer-events-auto">
+      <!-- Background Mode Toggle Button -->
+      <button id="toggle-bg-btn" class="px-3 py-2 rounded-lg bg-black/80 hover:bg-amber-950/50 text-amber-300 text-xs transition border gold-border flex items-center gap-2 backdrop-blur-md shadow-lg" title="Alternar entre Fundo Pontilhado e Preto Puro">
+        <i id="bg-icon" class="fa-solid fa-border-all text-amber-400"></i>
+        <span id="bg-text" class="text-[10px] font-mono hidden sm:inline uppercase">PONTILHADO</span>
+      </button>
+
+      <!-- Audio Synth Toggle -->
+      <button id="toggle-sound-btn" class="px-3 py-2 rounded-lg bg-black/80 hover:bg-amber-950/50 text-amber-300 text-xs transition border gold-border flex items-center gap-2 backdrop-blur-md shadow-lg">
+        <i id="sound-icon" class="fa-solid fa-volume-xmark text-amber-600"></i>
+        <span class="text-[10px] font-mono hidden sm:inline">SINTETIZADOR</span>
+      </button>
+
+      <!-- Settings Drawer Toggle -->
+      <button id="toggle-menu-btn" class="px-3 py-2 rounded-lg bg-black/80 hover:bg-amber-950/50 text-amber-300 text-xs transition border gold-border flex items-center gap-2 backdrop-blur-md shadow-lg">
+        <i class="fa-solid fa-sliders text-amber-400"></i>
+        <span class="text-[10px] font-mono hidden sm:inline">AJUSTES</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Settings Drawer Panel -->
+  <aside id="controls-drawer" class="fixed top-20 right-4 z-40 w-72 bg-black/90 border gold-border backdrop-blur-xl rounded-xl p-4 shadow-2xl transition-all duration-300 transform translate-x-[120%] text-xs text-amber-200 space-y-4">
+    <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+      <span class="font-bold text-amber-400 uppercase tracking-wider text-[11px] serif-title">
+        <i class="fa-solid fa-microchip mr-1.5"></i> Opções de Visualização
+      </span>
+      <button id="close-drawer-btn" class="text-amber-500 hover:text-amber-300 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Background Options -->
+    <div class="space-y-1.5">
+      <label class="text-[10px] text-amber-500 uppercase tracking-wider block font-bold">Estilo do Fundo (Sem Dourado)</label>
+      <div class="grid grid-cols-2 gap-2">
+        <button id="bg-opt-dotted" class="py-1.5 px-2 rounded-lg bg-amber-900/60 border border-amber-400 text-amber-200 text-[10px] font-mono flex items-center justify-center gap-1.5 transition">
+          <i class="fa-solid fa-border-all"></i> Pontilhado Neutro
+        </button>
+        <button id="bg-opt-black" class="py-1.5 px-2 rounded-lg bg-black border gold-border text-amber-500 hover:text-amber-300 text-[10px] font-mono flex items-center justify-center gap-1.5 transition">
+          <i class="fa-solid fa-square"></i> Preto Puro
+        </button>
+      </div>
+    </div>
+
+    <!-- Color Palette Picker for Atoms -->
+    <div class="space-y-1.5">
+      <label class="text-[10px] text-amber-500 uppercase tracking-wider block font-bold">Paleta dos Átomos</label>
+      <select id="palette-select" class="w-full bg-amber-950/60 border gold-border rounded-lg px-2.5 py-1.5 text-amber-200 focus:outline-none focus:border-amber-400 font-mono text-xs">
+        <option value="0" selected>01. Ouro Imperial & Obsidiana</option>
+        <option value="1">02. Âmbar Cyberpunk</option>
+        <option value="2">03. Ouro Solar Vibrante</option>
+        <option value="3">04. Esmeralda & Ouro</option>
+      </select>
+    </div>
+
+    <!-- Pixel Size Slider -->
+    <div class="space-y-1">
+      <div class="flex justify-between text-[10px]">
+        <span class="text-amber-500">Tamanho do Pixel Dither:</span>
+        <span id="pixel-val" class="font-mono text-amber-300">3px</span>
+      </div>
+      <input id="pixel-scale" type="range" min="1" max="8" value="3" step="1" class="w-full accent-amber-500 bg-amber-950 rounded cursor-pointer h-1.5">
+    </div>
+
+    <!-- Dither Intensity Slider -->
+    <div class="space-y-1">
+      <div class="flex justify-between text-[10px]">
+        <span class="text-amber-500">Intensidade do Dither:</span>
+        <span id="dither-val" class="font-mono text-amber-300">0.85</span>
+      </div>
+      <input id="dither-amount" type="range" min="0" max="1" value="0.85" step="0.05" class="w-full accent-amber-500 bg-amber-950 rounded cursor-pointer h-1.5">
+    </div>
+
+    <!-- Orbital Speed Slider -->
+    <div class="space-y-1">
+      <div class="flex justify-between text-[10px]">
+        <span class="text-amber-500">Velocidade da Órbita:</span>
+        <span id="speed-val" class="font-mono text-amber-300">1.2x</span>
+      </div>
+      <input id="orbit-speed" type="range" min="0.1" max="3" value="1.2" step="0.1" class="w-full accent-amber-500 bg-amber-950 rounded cursor-pointer h-1.5">
+    </div>
+
+    <!-- Scroll Reset -->
+    <button id="btn-reset-scroll" class="w-full py-2 bg-amber-950/60 hover:bg-amber-900/60 border gold-border rounded-lg text-amber-300 font-mono text-[11px] flex items-center justify-center gap-2 transition">
+      <i class="fa-solid fa-arrow-up-long"></i> Voltar ao Topo
+    </button>
+  </aside>
+
+  <!-- Scroll Track Container (Controls Camera Path, Atom Multiplication & Rocket Launch via Scroll) -->
+  <main class="relative z-10 w-full pointer-events-none h-[1200vh]">
+    <!-- Invisible scroll canvas to drive 3D dynamic transitions without text clutter -->
+  </main>
+
+  <!-- Slide-Up Content Reveal Panel (Revealed upon Rocket Launch at final scroll) -->
+  <section id="reveal-content" class="fixed inset-x-0 bottom-0 z-20 pointer-events-auto transform translate-y-full transition-transform duration-100 ease-out p-4 md:p-8 flex flex-col items-center justify-end min-h-[75vh] bg-gradient-to-t from-black via-black/95 to-transparent">
+    <div class="max-w-3xl w-full bg-black/85 border gold-border backdrop-blur-2xl rounded-2xl p-6 md:p-8 shadow-2xl space-y-6 text-amber-100 relative overflow-hidden">
+      <!-- Glow Accent -->
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="text-center space-y-2 relative z-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/80 border gold-border text-amber-400 text-[10px] font-mono uppercase tracking-widest">
+          <i class="fa-solid fa-rocket text-amber-400 animate-pulse"></i> Missão Concluída: Órbita Alcançada
+        </div>
+        <h2 class="text-2xl md:text-4xl font-extrabold text-amber-300 serif-title gold-glow uppercase tracking-wider">
+          Síntese de Hidrogênio
+        </h2>
+        <p class="text-xs md:text-sm text-amber-400/80 font-mono max-w-xl mx-auto leading-relaxed">
+          A matéria atômica primordial do elemento <span class="text-amber-200 font-bold">¹H</span> convergiu com sucesso através da força de campo quântico, sintetizando uma estrutura de propulsão estelar em Dither Dourado.
+        </p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 relative z-10">
+        <div class="p-3.5 rounded-xl bg-amber-950/30 border gold-border text-center space-y-1">
+          <div class="text-[10px] text-amber-500 font-mono uppercase">Átomos Reorganizados</div>
+          <div class="text-xl font-bold font-mono text-amber-300">120 <span class="text-xs font-normal text-amber-500">¹H</span></div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-amber-950/30 border gold-border text-center space-y-1">
+          <div class="text-[10px] text-amber-500 font-mono uppercase">Massa Atômica Total</div>
+          <div class="text-xl font-bold font-mono text-amber-300">120.96 <span class="text-xs font-normal text-amber-500">u</span></div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-amber-950/30 border gold-border text-center space-y-1">
+          <div class="text-[10px] text-amber-500 font-mono uppercase">Propulsão Específica</div>
+          <div class="text-xl font-bold font-mono text-amber-300">14.2 <span class="text-xs font-normal text-amber-500">MJ/kg</span></div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 relative z-10">
+        <button id="btn-relaunch" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-amber-700 via-amber-600 to-amber-500 text-black font-mono text-xs font-bold uppercase tracking-wider hover:brightness-110 transition shadow-lg shadow-amber-600/30 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-rotate-left"></i> Reiniciar Viagem Atômica
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Status HUD -->
+  <footer class="fixed bottom-0 left-0 right-0 z-30 p-4 flex justify-between items-end pointer-events-none bg-gradient-to-t from-black via-black/50 to-transparent">
+    <div class="font-mono text-[10px] text-amber-600/90 space-y-1">
+      <div>ESTADO: <strong id="hud-phase-status" class="text-amber-300 text-xs">EXPANSÃO</strong></div>
+      <div>ÁTOMOS EM ÓRBITA: <strong id="hud-atom-count" class="text-amber-300 text-xs">1</strong></div>
+      <div>PROFUNDIDADE SCROLL: <strong id="hud-scroll-pct" class="text-amber-400">0%</strong></div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="w-32 md:w-56 bg-amber-950/80 h-1.5 rounded-full overflow-hidden border border-amber-900/50 shadow-inner">
+      <div id="scroll-progress-fill" class="h-full bg-gradient-to-r from-amber-700 via-amber-400 to-yellow-200 w-0 transition-all duration-75"></div>
+    </div>
+
+    <div class="font-mono text-[10px] text-amber-600/90 text-right">
+      <span>QUADROS/SEG: <strong id="fps-counter" class="text-amber-400">60</strong></span>
+    </div>
+  </footer>
+
+  <script>
+    // Color Palettes for Gold Atoms
+    const PALETTES = [
+      // 0: Imperial Gold & Obsidian (Black -> Bronze -> Rich Gold -> Bright Yellow White)
+      [
+        new THREE.Vector3(0.01, 0.01, 0.01),
+        new THREE.Vector3(0.35, 0.22, 0.05),
+        new THREE.Vector3(0.85, 0.65, 0.12),
+        new THREE.Vector3(1.00, 0.92, 0.50)
+      ],
+      // 1: Cyberpunk Amber
+      [
+        new THREE.Vector3(0.02, 0.01, 0.00),
+        new THREE.Vector3(0.45, 0.15, 0.01),
+        new THREE.Vector3(0.95, 0.45, 0.05),
+        new THREE.Vector3(1.00, 0.80, 0.20)
+      ],
+      // 2: Solar Gold Flare
+      [
+        new THREE.Vector3(0.05, 0.01, 0.00),
+        new THREE.Vector3(0.50, 0.10, 0.00),
+        new THREE.Vector3(0.95, 0.55, 0.05),
+        new THREE.Vector3(1.00, 0.95, 0.40)
+      ],
+      // 3: Emerald & Gold
+      [
+        new THREE.Vector3(0.01, 0.03, 0.02),
+        new THREE.Vector3(0.12, 0.35, 0.20),
+        new THREE.Vector3(0.85, 0.70, 0.15),
+        new THREE.Vector3(0.95, 0.95, 0.60)
+      ]
+    ];
+
+    let container = document.getElementById('canvas-container');
+    let scene, camera, renderer, renderTarget;
+    let postScene, postCamera, ditherMaterial, ditherQuad;
+
+    // Master Groups
+    let atomsMasterGroup = new THREE.Group();
+    let particleCloudGroup = new THREE.Group();
+    let rocketGroup = new THREE.Group();
+    let exhaustParticles;
+
+    // Data structures
+    let atomInstances = [];
+    let rocketTargetPositions = [];
+
+    // Scroll & Physics State
+    let scrollProgress = 0.0;
+    let targetScrollProgress = 0.0;
+    let activeAtomCount = 1;
+    let orbitSpeedMult = 1.2;
+    let isSolidBlackBg = false;
+
+    // Audio State
+    let audioCtx = null;
+    let osc1 = null, osc2 = null;
+    let filterNode = null, gainNode = null;
+    let audioEnabled = false;
+
+    // Performance Stats
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+    let fpsCounter = document.getElementById('fps-counter');
+
+    const DitherShader = {
+      uniforms: {
+        tDiffuse: { value: null },
+        resolution: { value: new THREE.Vector2() },
+        pixelSize: { value: 3.0 },
+        ditherAmount: { value: 0.85 },
+        colorPalette: { value: PALETTES[0] }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform vec2 resolution;
+        uniform float pixelSize;
+        uniform float ditherAmount;
+        uniform vec3 colorPalette[4];
+        varying vec2 vUv;
+
+        // 4x4 Bayer Matrix
+        const mat4 bayerMatrix = mat4(
+          0.0/16.0, 12.0/16.0,  3.0/16.0, 15.0/16.0,
+          8.0/16.0,  4.0/16.0, 11.0/16.0,  7.0/16.0,
+          2.0/16.0, 14.0/16.0,  1.0/16.0, 13.0/16.0,
+         10.0/16.0,  6.0/16.0,  9.0/16.0,  5.0/16.0
+        );
+
+        float getBayerValue(vec2 pixelCoord) {
+          int x = int(mod(pixelCoord.x, 4.0));
+          int y = int(mod(pixelCoord.y, 4.0));
+          if (x == 0) {
+            if (y == 0) return bayerMatrix[0][0];
+            if (y == 1) return bayerMatrix[0][1];
+            if (y == 2) return bayerMatrix[0][2];
+            return bayerMatrix[0][3];
+          } else if (x == 1) {
+            if (y == 0) return bayerMatrix[1][0];
+            if (y == 1) return bayerMatrix[1][1];
+            if (y == 2) return bayerMatrix[1][2];
+            return bayerMatrix[1][3];
+          } else if (x == 2) {
+            if (y == 0) return bayerMatrix[2][0];
+            if (y == 1) return bayerMatrix[2][1];
+            if (y == 2) return bayerMatrix[2][2];
+            return bayerMatrix[2][3];
+          } else {
+            if (y == 0) return bayerMatrix[3][0];
+            if (y == 1) return bayerMatrix[3][1];
+            if (y == 2) return bayerMatrix[3][2];
+            return bayerMatrix[3][3];
+          }
+        }
+
+        void main() {
+          vec2 ditherRes = resolution / pixelSize;
+          vec2 pixelUv = floor(vUv * ditherRes) / ditherRes;
+
+          vec4 color = texture2D(tDiffuse, pixelUv);
+          float brightness = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+
+          vec2 screenPos = floor(vUv * resolution / pixelSize);
+          float threshold = getBayerValue(screenPos) - 0.5;
+
+          float ditheredLuma = clamp(brightness + threshold * ditherAmount, 0.0, 1.0);
+
+          // Detect saturation to separate gold elements from neutral background dots
+          float maxC = max(color.r, max(color.g, color.b));
+          float minC = min(color.r, min(color.g, color.b));
+          float chroma = maxC - minC;
+
+          vec3 finalColor;
+          // Color discrimination: if saturated or r > b + 0.03, render using Gold Palette
+          if (chroma > 0.05 || (color.r > color.b + 0.03)) {
+            if (ditheredLuma < 0.25) {
+              finalColor = colorPalette[0];
+            } else if (ditheredLuma < 0.50) {
+              finalColor = colorPalette[1];
+            } else if (ditheredLuma < 0.75) {
+              finalColor = colorPalette[2];
+            } else {
+              finalColor = colorPalette[3];
+            }
+          } else {
+            // Neutral Monochrome Background (Grey / Charcoal / Black - Zero Gold)
+            if (ditheredLuma < 0.35) {
+              finalColor = vec3(0.0); // Pure Black
+            } else if (ditheredLuma < 0.70) {
+              finalColor = vec3(0.20); // Dark Neutral Charcoal
+            } else {
+              finalColor = vec3(0.40); // Silver Grey
+            }
+          }
+
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    };
+
+    function generateRocketTargetPositions(totalPoints) {
+      const positions = [];
+
+      for (let i = 0; i < totalPoints; i++) {
+        let pos = new THREE.Vector3();
+
+        if (i < 20) {
+          // 1. Nose Cone (y from +6 to +15)
+          const pct = i / 20;
+          const y = 6 + pct * 9;
+          const radius = (1.0 - pct) * 3.2;
+          const angle = (i % 6) * (Math.PI * 2 / 6);
+          pos.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+        } else if (i < 80) {
+          // 2. Main Body Cylinder (y from -6 to +6)
+          const pct = (i - 20) / 60;
+          const y = -6 + pct * 12;
+          const radius = 3.2;
+          const angle = (i * 0.65) % (Math.PI * 2);
+          pos.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+        } else if (i < 100) {
+          // 3. Rocket Fins (4 fins outward at base)
+          const finIdx = (i - 80) % 4;
+          const pct = Math.floor((i - 80) / 4) / 5;
+          const finAngle = finIdx * (Math.PI / 2);
+          const r = 3.2 + pct * 4.2;
+          const y = -6 - pct * 3.5;
+          pos.set(Math.cos(finAngle) * r, y, Math.sin(finAngle) * r);
+        } else {
+          // 4. Thruster Flame Exhaust (y from -9.5 to -18)
+          const pct = (i - 100) / (totalPoints - 100);
+          const y = -9.5 - pct * 8.5;
+          const spread = pct * 2.8;
+          const angle = Math.random() * Math.PI * 2;
+          pos.set(Math.cos(angle) * spread, y, Math.sin(angle) * spread);
+        }
+
+        positions.push(pos);
+      }
+      return positions;
+    }
+
+    function createGoldRocketMesh() {
+      const matGoldWire = new THREE.MeshBasicMaterial({
+        color: 0xffd700,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.0
+      });
+
+      const matGoldSolid = new THREE.MeshBasicMaterial({
+        color: 0xffaa00,
+        transparent: true,
+        opacity: 0.0
+      });
+
+      // Rocket Body Cylinder
+      const bodyGeo = new THREE.CylinderGeometry(3.2, 3.2, 12, 16, 4, true);
+      const bodyMesh = new THREE.Mesh(bodyGeo, matGoldWire);
+      bodyMesh.position.y = 0;
+      rocketGroup.add(bodyMesh);
+
+      // Rocket Nose Cone
+      const noseGeo = new THREE.ConeGeometry(3.2, 9, 16, 4);
+      const noseMesh = new THREE.Mesh(noseGeo, matGoldWire);
+      noseMesh.position.y = 10.5;
+      rocketGroup.add(noseMesh);
+
+      // Nozzle Ring
+      const nozzleGeo = new THREE.CylinderGeometry(2.0, 2.8, 2.5, 12);
+      const nozzleMesh = new THREE.Mesh(nozzleGeo, matGoldSolid);
+      nozzleMesh.position.y = -7.25;
+      rocketGroup.add(nozzleMesh);
+
+      // 4 Fins
+      for (let i = 0; i < 4; i++) {
+        const finGeo = new THREE.BoxGeometry(0.3, 4.5, 4.0);
+        const finMesh = new THREE.Mesh(finGeo, matGoldSolid);
+        const angle = i * (Math.PI / 2);
+        finMesh.position.set(Math.cos(angle) * 4.2, -6.5, Math.sin(angle) * 4.2);
+        finMesh.rotation.y = angle;
+        rocketGroup.add(finMesh);
+      }
+
+      // Thruster Flame Dynamic Particles
+      const pCount = 150;
+      const pPos = new Float32Array(pCount * 3);
+      const pVel = [];
+
+      for (let i = 0; i < pCount; i++) {
+        pPos[i * 3] = (Math.random() - 0.5) * 2;
+        pPos[i * 3 + 1] = -8.5 - Math.random() * 10;
+        pPos[i * 3 + 2] = (Math.random() - 0.5) * 2;
+        pVel.push({
+          x: (Math.random() - 0.5) * 0.15,
+          y: -0.3 - Math.random() * 0.4,
+          z: (Math.random() - 0.5) * 0.15
+        });
+      }
+
+      const pGeo = new THREE.BufferGeometry();
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+
+      const pMat = new THREE.PointsMaterial({
+        size: 2.2,
+        color: 0xfff0aa,
+        transparent: true,
+        opacity: 0.0
+      });
+
+      exhaustParticles = new THREE.Points(pGeo, pMat);
+      exhaustParticles.userData = { vel: pVel };
+      rocketGroup.add(exhaustParticles);
+
+      rocketGroup.userData = {
+        wireMat: matGoldWire,
+        solidMat: matGoldSolid,
+        particleMat: pMat
+      };
+
+      rocketGroup.visible = false;
+      scene.add(rocketGroup);
+    }
+
+    function initEngine() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x000000, 0.012);
+
+      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera.position.set(0, 0, 35);
+
+      renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(1);
+      renderer.setClearColor(0x000000, 1.0);
+      container.appendChild(renderer.domElement);
+
+      // Render Target for Dither Post-Processing
+      renderTarget = new THREE.WebGLRenderTarget(width, height, {
+        minFilter: THREE.NearestFilter,
+        magFilter: THREE.NearestFilter,
+        format: THREE.RGBAFormat
+      });
+
+      // Post-Processing Orthographic Scene
+      postScene = new THREE.Scene();
+      postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+      ditherMaterial = new THREE.ShaderMaterial({
+        vertexShader: DitherShader.vertexShader,
+        fragmentShader: DitherShader.fragmentShader,
+        uniforms: THREE.UniformsUtils.clone(DitherShader.uniforms)
+      });
+      ditherMaterial.uniforms.tDiffuse.value = renderTarget.texture;
+      ditherMaterial.uniforms.resolution.value.set(width, height);
+
+      ditherQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), ditherMaterial);
+      postScene.add(ditherQuad);
+
+      scene.add(atomsMasterGroup);
+      scene.add(particleCloudGroup);
+
+      // Generate Rocket 3D Target Point Cloud
+      rocketTargetPositions = generateRocketTargetPositions(120);
+
+      // Generate Hydrogen Atoms, 3D Rocket Mesh and Background Cloud
+      generateAtomField();
+      createGoldRocketMesh();
+      buildBackgroundParticleCloud();
+
+      // Window Event Listeners
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('scroll', onScrollUpdate);
+    }
+
+    function createHydrogenAtomMesh(scale = 1.0) {
+      const atomGroup = new THREE.Group();
+
+      // 1. Central Proton (Gold Nucleus)
+      const protonGeo = new THREE.BufferGeometry();
+      protonGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0], 3));
+      const protonMat = new THREE.PointsMaterial({
+        size: 3.5 * scale,
+        color: 0xffd700, // Imperial Gold
+        sizeAttenuation: true
+      });
+      const protonPoints = new THREE.Points(protonGeo, protonMat);
+      atomGroup.add(protonPoints);
+
+      // 2. Orbital Path Ring
+      const orbitRadius = 6.0 * scale;
+      const curve = new THREE.EllipseCurve(0, 0, orbitRadius, orbitRadius, 0, Math.PI * 2, false, 0);
+      const points = curve.getPoints(64);
+      const ringGeo = new THREE.BufferGeometry().setFromPoints(
+        points.map(p => new THREE.Vector3(p.x, 0, p.y))
+      );
+
+      const ringMat = new THREE.LineDashedMaterial({
+        color: 0xdaa520, // Goldenrod
+        dashSize: 0.5,
+        gapSize: 0.3,
+        transparent: true,
+        opacity: 1.0
+      });
+      const ringLine = new THREE.Line(ringGeo, ringMat);
+      ringLine.computeLineDistances();
+      atomGroup.add(ringLine);
+
+      // 3. Electron Particle & Trail
+      const electronGeo = new THREE.BufferGeometry();
+      electronGeo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0], 3));
+      const electronMat = new THREE.PointsMaterial({
+        size: 2.2 * scale,
+        color: 0xfff0aa, // Bright Golden White
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 1.0
+      });
+      const electronMesh = new THREE.Points(electronGeo, electronMat);
+
+      // Tail Trail Line
+      const trailCount = 14;
+      const trailPos = new Float32Array(trailCount * 3);
+      const trailGeo = new THREE.BufferGeometry();
+      trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
+      const trailMat = new THREE.LineBasicMaterial({
+        color: 0xffa500, // Amber Gold
+        transparent: true,
+        opacity: 0.8
+      });
+      const trailMesh = new THREE.Line(trailGeo, trailMat);
+
+      atomGroup.add(electronMesh);
+      atomGroup.add(trailMesh);
+
+      // Metadata state
+      atomGroup.userData = {
+        orbitRadius: orbitRadius,
+        orbitSpeed: 2.2 + Math.random() * 0.8,
+        tiltX: Math.random() * Math.PI,
+        tiltZ: Math.random() * Math.PI,
+        ringLine: ringLine,
+        ringMat: ringMat,
+        electronMesh: electronMesh,
+        electronMat: electronMat,
+        trailMesh: trailMesh,
+        trailMat: trailMat,
+        trailHistory: [],
+        spawnIndex: 0,
+        cosmosPos: new THREE.Vector3(),
+        rocketPos: new THREE.Vector3()
+      };
+
+      return atomGroup;
+    }
+
+    function generateAtomField() {
+      const maxAtoms = 120;
+
+      for (let i = 0; i < maxAtoms; i++) {
+        const atom = createHydrogenAtomMesh(1.0);
+        atom.userData.spawnIndex = i;
+
+        let targetPos = new THREE.Vector3();
+
+        if (i === 0) {
+          // Central Primordial Atom
+          targetPos.set(0, 0, 0);
+        } else if (i < 6) {
+          // Molecular Pairs
+          const angle = (i / 5) * Math.PI * 2;
+          const dist = 12 + (i % 2) * 4;
+          targetPos.set(Math.cos(angle) * dist, Math.sin(angle) * dist, (Math.random() - 0.5) * 6);
+        } else if (i < 30) {
+          // Inner Cluster Shell
+          const u = Math.random();
+          const v = Math.random();
+          const theta = u * 2.0 * Math.PI;
+          const phi = Math.acos(2.0 * v - 1.0);
+          const r = 18 + Math.random() * 22;
+
+          targetPos.set(
+            r * Math.sin(phi) * Math.cos(theta),
+            r * Math.sin(phi) * Math.sin(theta),
+            r * Math.cos(phi)
+          );
+        } else {
+          // Outer Cosmos Field
+          targetPos.set(
+            (Math.random() - 0.5) * 130,
+            (Math.random() - 0.5) * 130,
+            (Math.random() - 0.5) * 110
+          );
+        }
+
+        atom.userData.cosmosPos.copy(targetPos);
+        atom.userData.rocketPos.copy(rocketTargetPositions[i] || targetPos);
+
+        atom.position.copy(targetPos);
+        atom.visible = (i === 0);
+
+        atomsMasterGroup.add(atom);
+        atomInstances.push(atom);
+      }
+    }
+
+    // Neutral Monochrome Background Dots (Zero Gold)
+    function buildBackgroundParticleCloud() {
+      const count = 3500;
+      const positions = [];
+      const colors = [];
+      const darkGrey = new THREE.Color(0x181818);
+      const lightGrey = new THREE.Color(0x555555);
+
+      for (let i = 0; i < count; i++) {
+        positions.push(
+          (Math.random() - 0.5) * 240,
+          (Math.random() - 0.5) * 240,
+          (Math.random() - 0.5) * 240
+        );
+
+        const mixed = darkGrey.clone().lerp(lightGrey, Math.random() * 0.5);
+        colors.push(mixed.r, mixed.g, mixed.b);
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+      const mat = new THREE.PointsMaterial({
+        size: 0.8,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.4
+      });
+
+      const cloud = new THREE.Points(geo, mat);
+      particleCloudGroup.add(cloud);
+    }
+
+    function onScrollUpdate() {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll > 0) {
+        targetScrollProgress = Math.min(1.0, Math.max(0.0, window.scrollY / maxScroll));
+      }
+    }
+
+    function initAudioSynth() {
+      if (audioCtx) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+
+        osc1 = audioCtx.createOscillator();
+        osc2 = audioCtx.createOscillator();
+        filterNode = audioCtx.createBiquadFilter();
+        gainNode = audioCtx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'sine';
+
+        osc1.frequency.setValueAtTime(55, audioCtx.currentTime);
+        osc2.frequency.setValueAtTime(110, audioCtx.currentTime);
+
+        filterNode.type = 'lowpass';
+        filterNode.frequency.setValueAtTime(200, audioCtx.currentTime);
+
+        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+
+        osc1.connect(filterNode);
+        osc2.connect(filterNode);
+        filterNode.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc1.start();
+        osc2.start();
+      } catch (e) {
+        console.warn("Audio Context error", e);
+      }
+    }
+
+    function updateAudioPitch() {
+      if (!audioCtx || !osc1 || !gainNode) return;
+      let freq = 55 + (scrollProgress * 320);
+      if (scrollProgress > 0.82) {
+        const launchBoost = (scrollProgress - 0.82) / 0.18;
+        freq += launchBoost * 280; // High frequency rocket rumble sweep
+      }
+      osc1.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.1);
+      osc2.frequency.setTargetAtTime(freq * 1.5, audioCtx.currentTime, 0.1);
+      filterNode.frequency.setTargetAtTime(150 + scrollProgress * 1500, audioCtx.currentTime, 0.1);
+    }
+
+    function onWindowResize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
+      renderTarget.setSize(width, height);
+      ditherMaterial.uniforms.resolution.value.set(width, height);
+    }
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const time = clock.getElapsedTime();
+
+      // FPS Calculation
+      frameCount++;
+      const now = performance.now();
+      if (now - lastFrameTime >= 1000) {
+        fpsCounter.textContent = frameCount;
+        frameCount = 0;
+        lastFrameTime = now;
+      }
+
+      // Smooth Lerp Interpolation for Scroll Progression
+      scrollProgress += (targetScrollProgress - scrollProgress) * 0.08;
+
+      // Update HUD Values
+      document.getElementById('hud-scroll-pct').textContent = Math.round(scrollProgress * 100) + '%';
+      document.getElementById('scroll-progress-fill').style.width = (scrollProgress * 100) + '%';
+
+      // Scroll Phase Logic
+      const titleEl = document.getElementById('hud-phase-title');
+      const statusEl = document.getElementById('hud-phase-status');
+
+      let phase1MaxAtomCount = atomInstances.length;
+
+      // Phase Thresholds
+      const p1End = 0.32;
+      const p2End = 0.65;
+      const p3End = 0.82;
+
+      if (scrollProgress < p1End) {
+        if (titleEl) titleEl.textContent = "FASE 1: EXPANSÃO ATÔMICA";
+        if (statusEl) statusEl.textContent = "EXPANSÃO";
+      } else if (scrollProgress < p2End) {
+        if (titleEl) titleEl.textContent = "FASE 2: CONVERGÊNCIA MOLECULAR";
+        if (statusEl) statusEl.textContent = "REORGANIZAÇÃO";
+      } else if (scrollProgress < p3End) {
+        if (titleEl) titleEl.textContent = "FASE 3: SÍNTESE FOGUETE DOURADO";
+        if (statusEl) statusEl.textContent = "FOGUETE";
+      } else {
+        if (titleEl) titleEl.textContent = "FASE 4: LANÇAMENTO ESPACIAL";
+        if (statusEl) statusEl.textContent = "DECOLAGEM";
+      }
+
+      // Compute active atoms count smoothly
+      const spawnProgress = Math.min(1.0, scrollProgress / 0.28);
+      activeAtomCount = Math.floor(1 + Math.pow(spawnProgress, 1.8) * (phase1MaxAtomCount - 1));
+      document.getElementById('hud-atom-count').textContent = activeAtomCount;
+
+      updateAudioPitch();
+
+      // Camera Dynamics - 100% Continuous Path
+      const baseAngle = time * 0.15;
+      let camRadius, camAngle, camY;
+
+      if (scrollProgress < p1End) {
+        const t1 = scrollProgress / p1End;
+        camRadius = 35 + t1 * 25;
+        camAngle = baseAngle + t1 * (Math.PI * 0.5);
+        camY = Math.sin(time * 0.10) * 8 + (t1 * 10 - 5);
+      } else if (scrollProgress < p2End) {
+        const t2 = (scrollProgress - p1End) / (p2End - p1End);
+        const easeT2 = t2 * t2 * (3 - 2 * t2);
+        camRadius = 60 - easeT2 * 20;
+        camAngle = baseAngle + (Math.PI * 0.5) + easeT2 * (Math.PI * 0.5);
+        const endY1 = Math.sin(time * 0.10) * 8 + 5;
+        camY = (1 - easeT2) * endY1 + easeT2 * 2;
+      } else {
+        const t3 = Math.min(1.0, (scrollProgress - p2End) / (1.0 - p2End));
+        camRadius = 40;
+        camAngle = baseAngle + Math.PI + t3 * (Math.PI * 0.25);
+        camY = (1 - t3) * 2 + Math.sin(time * 0.2) * 3;
+      }
+
+      camera.position.set(
+        Math.sin(camAngle) * camRadius,
+        camY,
+        Math.cos(camAngle) * camRadius
+      );
+      camera.lookAt(0, 0, 0);
+
+      // Rocket Launch Elevation Acceleration (Phase 4)
+      let launchOffsetY = 0;
+      if (scrollProgress >= p3End) {
+        const launchT = (scrollProgress - p3End) / (1.0 - p3End);
+        // Quad Acceleration for epic blast off
+        launchOffsetY = Math.pow(launchT, 2.2) * 95.0;
+      }
+
+      // Apply launch Y offset to rocket and master atom group together
+      rocketGroup.position.y = launchOffsetY;
+      atomsMasterGroup.position.y = launchOffsetY;
+
+      // Animate Slide-Up Reveal Panel
+      const revealEl = document.getElementById('reveal-content');
+      if (revealEl) {
+        if (scrollProgress >= p3End) {
+          const revealT = Math.min(1.0, (scrollProgress - p3End) / (1.0 - p3End));
+          const easeReveal = 1.0 - Math.pow(1.0 - revealT, 3);
+          const translateYPct = (1.0 - easeReveal) * 100;
+          revealEl.style.transform = `translateY(${translateYPct}%)`;
+        } else {
+          revealEl.style.transform = 'translateY(100%)';
+        }
+      }
+
+      // Smooth master group Y rotation speed transition
+      const masterSpeed = 0.05 + 0.05 * Math.min(1.0, Math.max(0.0, (scrollProgress - 0.35) / 0.35));
+      atomsMasterGroup.rotation.y = time * masterSpeed * orbitSpeedMult;
+      atomsMasterGroup.rotation.z = 0;
+      particleCloudGroup.rotation.y = -time * 0.02;
+
+      // Rocket Mesh and Exhaust Particle updates with smooth fade-in
+      const rocketFadeStart = 0.52;
+      const rocketFadeEnd = 0.72;
+
+      if (scrollProgress >= rocketFadeStart) {
+        rocketGroup.visible = true;
+        const rocketT = Math.min(1.0, (scrollProgress - rocketFadeStart) / (rocketFadeEnd - rocketFadeStart));
+        const easeRocket = rocketT * rocketT * (3 - 2 * rocketT);
+        
+        rocketGroup.userData.wireMat.opacity = easeRocket * 0.9;
+        rocketGroup.userData.solidMat.opacity = easeRocket * 0.8;
+        rocketGroup.userData.particleMat.opacity = easeRocket * 1.0;
+
+        rocketGroup.rotation.y = atomsMasterGroup.rotation.y;
+
+        // Animate Thruster Exhaust (Boost particle speed on launch)
+        if (exhaustParticles) {
+          const positions = exhaustParticles.geometry.attributes.position.array;
+          const vels = exhaustParticles.userData.vel;
+          const launchBoostMult = scrollProgress >= p3End ? 2.5 : 1.0;
+
+          for (let p = 0; p < vels.length; p++) {
+            positions[p * 3] += vels[p].x * launchBoostMult;
+            positions[p * 3 + 1] += vels[p].y * launchBoostMult;
+            positions[p * 3 + 2] += vels[p].z * launchBoostMult;
+
+            // Reset loop
+            if (positions[p * 3 + 1] < -22) {
+              positions[p * 3] = (Math.random() - 0.5) * 1.5;
+              positions[p * 3 + 1] = -8.0;
+              positions[p * 3 + 2] = (Math.random() - 0.5) * 1.5;
+            }
+          }
+          exhaustParticles.geometry.attributes.position.needsUpdate = true;
+        }
+      } else {
+        rocketGroup.visible = false;
+      }
+
+      // Update Individual Hydrogen Atoms with ultra-smooth lerping
+      atomInstances.forEach((atom, idx) => {
+        const data = atom.userData;
+
+        // Smooth atom activation/fade-in
+        const atomThreshold = (idx / phase1MaxAtomCount) * 0.28;
+        let atomAlpha = 1.0;
+        if (scrollProgress < atomThreshold) {
+          atomAlpha = 0.0;
+        } else if (scrollProgress < atomThreshold + 0.05) {
+          atomAlpha = (scrollProgress - atomThreshold) / 0.05;
+        }
+
+        if (atomAlpha > 0.0) {
+          atom.visible = true;
+
+          // Dissolve orbital elements smoothly near rocket phase end
+          let dissolveFactor = 1.0;
+          if (scrollProgress >= 0.65) {
+            dissolveFactor = Math.max(0.0, 1.0 - (scrollProgress - 0.65) / 0.12);
+          }
+
+          const finalRingAlpha = atomAlpha * dissolveFactor;
+          data.ringMat.opacity = finalRingAlpha;
+          data.electronMat.opacity = finalRingAlpha;
+          data.trailMat.opacity = 0.8 * finalRingAlpha;
+
+          // Position Interpolation from Cosmos to Rocket Grid
+          if (scrollProgress < p1End) {
+            atom.position.copy(data.cosmosPos);
+          } else if (scrollProgress < p2End) {
+            const lerpT = (scrollProgress - p1End) / (p2End - p1End);
+            const easeT = lerpT * lerpT * (3 - 2 * lerpT);
+            atom.position.lerpVectors(data.cosmosPos, data.rocketPos, easeT);
+          } else {
+            atom.position.copy(data.rocketPos);
+          }
+
+          // Compute orbital position
+          const currentAngle = (time * data.orbitSpeed * orbitSpeedMult) + idx;
+          const rx = Math.cos(currentAngle) * data.orbitRadius;
+          const rz = Math.sin(currentAngle) * data.orbitRadius;
+
+          const vec = new THREE.Vector3(rx, 0, rz);
+          vec.applyAxisAngle(new THREE.Vector3(1, 0, 0), data.tiltX);
+          vec.applyAxisAngle(new THREE.Vector3(0, 0, 1), data.tiltZ);
+
+          data.electronMesh.position.copy(vec);
+
+          // Update trail line history
+          data.trailHistory.unshift(vec.clone());
+          if (data.trailHistory.length > 14) data.trailHistory.pop();
+
+          const trailPositions = data.trailMesh.geometry.attributes.position;
+          for (let t = 0; t < data.trailHistory.length; t++) {
+            trailPositions.setXYZ(t, data.trailHistory[t].x, data.trailHistory[t].y, data.trailHistory[t].z);
+          }
+          trailPositions.needsUpdate = true;
+        } else {
+          atom.visible = false;
+        }
+      });
+
+      // Render 3D Scene to Offscreen Render Target
+      renderer.setRenderTarget(renderTarget);
+      renderer.render(scene, camera);
+
+      // Render Final Quad with Dither Shader
+      renderer.setRenderTarget(null);
+      renderer.render(postScene, postCamera);
+    }
+
+    function setupUIEvents() {
+      // Background Mode Handler (Dotted Neutral vs Pure Black)
+      function setBgMode(solidBlack) {
+        isSolidBlackBg = solidBlack;
+        particleCloudGroup.visible = !isSolidBlackBg;
+
+        const bgIcon = document.getElementById('bg-icon');
+        const bgText = document.getElementById('bg-text');
+        const btnDotted = document.getElementById('bg-opt-dotted');
+        const btnBlack = document.getElementById('bg-opt-black');
+
+        if (isSolidBlackBg) {
+          if (bgIcon) bgIcon.className = "fa-solid fa-square text-amber-500/80";
+          if (bgText) bgText.textContent = "PRETO PURO";
+
+          if (btnBlack) {
+            btnBlack.className = "py-1.5 px-2 rounded-lg bg-amber-900/60 border border-amber-400 text-amber-200 text-[10px] font-mono flex items-center justify-center gap-1.5 transition";
+          }
+          if (btnDotted) {
+            btnDotted.className = "py-1.5 px-2 rounded-lg bg-black border gold-border text-amber-500 hover:text-amber-300 text-[10px] font-mono flex items-center justify-center gap-1.5 transition";
+          }
+        } else {
+          if (bgIcon) bgIcon.className = "fa-solid fa-border-all text-amber-400";
+          if (bgText) bgText.textContent = "PONTILHADO";
+
+          if (btnDotted) {
+            btnDotted.className = "py-1.5 px-2 rounded-lg bg-amber-900/60 border border-amber-400 text-amber-200 text-[10px] font-mono flex items-center justify-center gap-1.5 transition";
+          }
+          if (btnBlack) {
+            btnBlack.className = "py-1.5 px-2 rounded-lg bg-black border gold-border text-amber-500 hover:text-amber-300 text-[10px] font-mono flex items-center justify-center gap-1.5 transition";
+          }
+        }
+      }
+
+      document.getElementById('toggle-bg-btn').addEventListener('click', () => {
+        setBgMode(!isSolidBlackBg);
+      });
+      document.getElementById('bg-opt-dotted').addEventListener('click', () => setBgMode(false));
+      document.getElementById('bg-opt-black').addEventListener('click', () => setBgMode(true));
+
+      // Settings Drawer Toggle
+      const drawer = document.getElementById('controls-drawer');
+      document.getElementById('toggle-menu-btn').addEventListener('click', () => {
+        drawer.classList.toggle('translate-x-[120%]');
+      });
+      document.getElementById('close-drawer-btn').addEventListener('click', () => {
+        drawer.classList.add('translate-x-[120%]');
+      });
+
+      // Atom Palette Switcher
+      document.getElementById('palette-select').addEventListener('change', (e) => {
+        const idx = parseInt(e.target.value, 10);
+        ditherMaterial.uniforms.colorPalette.value = PALETTES[idx];
+      });
+
+      // Pixel Scale Slider
+      document.getElementById('pixel-scale').addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        document.getElementById('pixel-val').textContent = val + 'px';
+        ditherMaterial.uniforms.pixelSize.value = val;
+      });
+
+      // Dither Amount Slider
+      document.getElementById('dither-amount').addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        document.getElementById('dither-val').textContent = val.toFixed(2);
+        ditherMaterial.uniforms.ditherAmount.value = val;
+      });
+
+      // Orbital Speed Slider
+      document.getElementById('orbit-speed').addEventListener('input', (e) => {
+        orbitSpeedMult = parseFloat(e.target.value);
+        document.getElementById('speed-val').textContent = orbitSpeedMult.toFixed(1) + 'x';
+      });
+
+      // Scroll Reset Button
+      document.getElementById('btn-reset-scroll').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Relaunch Button in Reveal Panel
+      const btnRelaunch = document.getElementById('btn-relaunch');
+      if (btnRelaunch) {
+        btnRelaunch.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // Audio Toggle Button
+      const btnSound = document.getElementById('toggle-sound-btn');
+      const soundIcon = document.getElementById('sound-icon');
+
+      btnSound.addEventListener('click', () => {
+        audioEnabled = !audioEnabled;
+        if (audioEnabled) {
+          initAudioSynth();
+          if (audioCtx) audioCtx.resume();
+          soundIcon.className = "fa-solid fa-volume-high text-amber-400";
+          btnSound.classList.add('border-amber-400');
+        } else {
+          if (audioCtx) audioCtx.suspend();
+          soundIcon.className = "fa-solid fa-volume-xmark text-amber-600";
+          btnSound.classList.remove('border-amber-400');
+        }
+      });
+    }
+
+    // Launch Application
+    window.onload = () => {
+      initEngine();
+      setupUIEvents();
+      animate();
+    };
+  </script>
+</body>
+</html>
