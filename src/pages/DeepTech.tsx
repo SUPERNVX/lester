@@ -1,4 +1,5 @@
 import heroBg from "../assets/fab.webp";
+import { DitherStrip, Eyebrow, PrimaryCta } from "../components/Apple";
 
 const EMAIL = "lesteraf@gmail.com";
 
@@ -59,50 +60,45 @@ const OUTCOMES = [
 export default function DeepTech() {
   return (
     <div className="min-h-screen bg-void text-mist-100">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="dither-panel relative overflow-hidden">
         <img
           src={heroBg}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-30"
+          className="img-apple pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-25"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/80 to-void/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/85 to-void/40" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-void to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-24">
-          <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-            Deep Tech Ventures
-          </p>
-          <h1 className="font-display mt-4 max-w-3xl text-4xl leading-tight font-extrabold md:text-6xl">
+        <div className="relative mx-auto max-w-5xl px-5 py-16 md:py-24">
+          <Eyebrow>Deep Tech Ventures</Eyebrow>
+          <h1 className="headline mt-4 max-w-3xl text-[40px] md:text-[64px]">
             Tecnologia promissora não é negócio até que exista{" "}
-            <em className="gold-glow text-gold-300">
+            <span className="bg-gradient-to-b from-gold-200 via-gold-400 to-gold-600 bg-clip-text text-transparent">
               uma tese e uma arquitetura de execução.
-            </em>
+            </span>
           </h1>
-          <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-mist-300">
+          <p className="subhead mt-5 max-w-xl">
             Apoio empreendedores, empresas e investidores na avaliação e
             estruturação de novos negócios de base científica e tecnológica.
           </p>
-          <a
-            className="mt-7 inline-block rounded-full bg-gold-500 px-6 py-3 font-mono text-[11px] font-bold tracking-widest text-black uppercase transition hover:bg-gold-400"
-            href={`mailto:${EMAIL}?subject=Avaliar%20oportunidade%20deep%20tech`}
-          >
-            Avaliar oportunidade ↗
-          </a>
+          <div className="mt-8">
+            <PrimaryCta href={`mailto:${EMAIL}?subject=Avaliar%20oportunidade%20deep%20tech`}>
+              Avaliar oportunidade ↗
+            </PrimaryCta>
+          </div>
         </div>
       </section>
 
-      {/* Vale */}
-      <section className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-16 md:grid-cols-12 md:py-20">
+      <DitherStrip className="mx-auto max-w-2xl" />
+
+      <section className="mx-auto grid max-w-5xl grid-cols-1 gap-10 px-5 py-16 md:grid-cols-12 md:py-24">
         <div className="md:col-span-5">
-          <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-            O vale entre tecnologia e negócio
-          </p>
-          <h2 className="font-display mt-4 text-3xl leading-tight font-extrabold md:text-4xl">
+          <Eyebrow>O vale entre tecnologia e negócio</Eyebrow>
+          <h2 className="headline mt-4 text-[30px] md:text-[40px]">
             Boas tecnologias também fracassam.
           </h2>
         </div>
-        <div className="space-y-3 font-mono text-sm leading-relaxed text-mist-300 md:col-span-7">
+        <div className="space-y-4 text-[15px] leading-relaxed text-mist-300 md:col-span-7">
           <p>
             Muitas iniciativas deep tech possuem pesquisadores competentes,
             protótipos promissores e conhecimento diferenciado — mas não
@@ -120,25 +116,22 @@ export default function DeepTech() {
         </div>
       </section>
 
-      {/* O que avalio */}
-      <section className="border-y border-white/10 bg-obsidian">
-        <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
-          <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-            O que avalio
-          </p>
-          <h2 className="font-display mt-4 max-w-2xl text-3xl leading-tight font-extrabold md:text-4xl">
+      <section className="border-y border-white/[0.07] bg-obsidian/60">
+        <div className="mx-auto max-w-5xl px-5 py-16 md:py-24">
+          <Eyebrow>O que avalio</Eyebrow>
+          <h2 className="headline mt-4 max-w-2xl text-[30px] md:text-[40px]">
             A tecnologia é apenas uma das variáveis.
           </h2>
-          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {CRITERIA.map((c) => (
-              <div key={c.n} className="gold-border rounded-2xl bg-void p-5">
-                <p className="font-display text-sm font-extrabold text-gold-600">
+              <div key={c.n} className="card-soft p-6">
+                <p className="font-mono2 text-[12px] font-semibold text-gold-500">
                   {c.n}
                 </p>
-                <p className="font-display mt-1 text-lg leading-snug font-bold">
+                <p className="mt-1.5 text-[17px] leading-snug font-semibold tracking-tight">
                   {c.t}
                 </p>
-                <p className="mt-1.5 font-mono text-[11px] leading-relaxed text-mist-500">
+                <p className="mt-1.5 text-[13px] leading-relaxed text-mist-500">
                   {c.d}
                 </p>
               </div>
@@ -147,18 +140,15 @@ export default function DeepTech() {
         </div>
       </section>
 
-      {/* Meu papel */}
-      <section className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-16 md:grid-cols-12 md:py-20">
+      <section className="mx-auto grid max-w-5xl grid-cols-1 gap-10 px-5 py-16 md:grid-cols-12 md:py-24">
         <div className="md:col-span-6">
-          <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-            Meu papel
-          </p>
-          <h2 className="font-display mt-4 text-3xl leading-tight font-extrabold md:text-4xl">
+          <Eyebrow>Meu papel</Eyebrow>
+          <h2 className="headline mt-4 text-[30px] md:text-[40px]">
             Advisor estratégico.{" "}
-            <em className="gold-glow text-gold-300">Não operador diário.</em>
+            <span className="text-gold-300">Não operador diário.</span>
           </h2>
         </div>
-        <div className="space-y-3 font-mono text-sm leading-relaxed text-mist-300 md:col-span-6">
+        <div className="space-y-4 text-[15px] leading-relaxed text-mist-300 md:col-span-6">
           <p>
             Atuo na estruturação da tese, avaliação de riscos,
             posicionamento, arquitetura tecnológica e empresarial e decisões
@@ -172,14 +162,11 @@ export default function DeepTech() {
         </div>
       </section>
 
-      {/* Resultado esperado */}
-      <section className="border-t border-white/10 bg-obsidian">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-16 md:grid-cols-12 md:py-20">
+      <section className="border-t border-white/[0.07] bg-obsidian/60">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-10 px-5 py-16 md:grid-cols-12 md:py-24">
           <div className="md:col-span-4">
-            <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-              Resultado esperado
-            </p>
-            <h2 className="font-display mt-4 text-3xl leading-tight font-extrabold md:text-4xl">
+            <Eyebrow>Resultado esperado</Eyebrow>
+            <h2 className="headline mt-4 text-[30px] md:text-[40px]">
               Uma tese que possa ser testada e defendida.
             </h2>
           </div>
@@ -187,9 +174,9 @@ export default function DeepTech() {
             {OUTCOMES.map((o) => (
               <li
                 key={o}
-                className="flex gap-3 border-b border-white/10 py-2.5 font-mono text-[13px] text-mist-300"
+                className="flex gap-3 border-b border-white/10 py-3 text-[14px] text-mist-300"
               >
-                <span aria-hidden="true" className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                <span aria-hidden="true" className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
                 {o}
               </li>
             ))}
@@ -197,27 +184,21 @@ export default function DeepTech() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-20">
-        <div className="gold-border grid grid-cols-1 items-center gap-6 rounded-3xl bg-obsidian p-8 md:grid-cols-[1fr_auto] md:p-10">
+      <section className="mx-auto max-w-5xl px-5 py-16 md:py-24">
+        <div className="card-soft grid grid-cols-1 items-center gap-6 p-8 md:grid-cols-[1fr_auto] md:p-10">
           <div>
-            <p className="font-mono text-[10px] tracking-[0.25em] text-gold-500 uppercase">
-              Deep Tech Ventures
-            </p>
-            <p className="font-display mt-2 max-w-xl text-3xl leading-tight font-extrabold md:text-4xl">
+            <Eyebrow>Deep Tech Ventures</Eyebrow>
+            <p className="headline mt-3 max-w-xl text-[28px] md:text-[36px]">
               A tecnologia é relevante. Mas o negócio é defensável?
             </p>
-            <p className="mt-2 max-w-xl font-mono text-xs leading-relaxed text-mist-500">
+            <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-mist-500">
               Uma avaliação estratégica deve acontecer antes que anos e
               capital sejam consumidos pela hipótese errada.
             </p>
           </div>
-          <a
-            className="rounded-full bg-gold-500 px-6 py-3 text-center font-mono text-[11px] font-bold tracking-widest text-black uppercase transition hover:bg-gold-400"
-            href={`mailto:${EMAIL}?subject=Solicitar%20avaliação%20deep%20tech`}
-          >
+          <PrimaryCta href={`mailto:${EMAIL}?subject=Solicitar%20avaliação%20deep%20tech`}>
             Solicitar avaliação ↗
-          </a>
+          </PrimaryCta>
         </div>
       </section>
     </div>

@@ -5,6 +5,7 @@ import adarter from "../assets/mission-adarter-case.webp";
 import aerospace from "../assets/mission-aerospace-case.webp";
 import robot from "../assets/robot.webp";
 import optimization from "../assets/mission-optimization-case.webp";
+import { Eyebrow, PrimaryCta } from "../components/Apple";
 
 const EMAIL = "lesteraf@gmail.com";
 
@@ -92,64 +93,59 @@ const CASES = [
 export default function MissionsPage() {
   return (
     <div className="min-h-screen bg-void text-mist-100">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="dither-panel relative overflow-hidden">
         <img
           src={heroBg}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-30"
+          className="img-apple pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-25"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/80 to-void/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/85 to-void/40" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-void to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-24">
-          <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-            Selected Missions
-          </p>
-          <h1 className="font-display mt-4 max-w-3xl text-4xl leading-tight font-extrabold md:text-6xl">
+        <div className="relative mx-auto max-w-5xl px-5 py-16 md:py-24">
+          <Eyebrow>Selected Missions</Eyebrow>
+          <h1 className="headline mt-4 max-w-3xl text-[40px] md:text-[64px]">
             Autoridade não se declara.{" "}
-            <em className="gold-glow text-gold-300">
+            <span className="bg-gradient-to-b from-gold-200 via-gold-400 to-gold-600 bg-clip-text text-transparent">
               Demonstra-se nas missões assumidas.
-            </em>
+            </span>
           </h1>
-          <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-mist-300">
+          <p className="subhead mt-5 max-w-xl">
             Uma seleção de ambientes em que tecnologia, estratégia, risco,
             instituições e execução precisaram operar juntos.
           </p>
         </div>
       </section>
 
-      {/* Cases */}
-      <section className="mx-auto max-w-6xl space-y-4 px-6 py-16 md:py-20">
+      {/* Cases — layout Apple: imagem à esquerda, spec-list à direita */}
+      <section className="mx-auto max-w-5xl space-y-5 px-5 py-16 md:py-24">
         {CASES.map((c, i) => (
           <article
             key={c.title}
-            className="gold-border grid grid-cols-1 gap-6 rounded-3xl bg-obsidian p-5 md:grid-cols-12 md:p-7"
+            className="card-soft grid grid-cols-1 gap-0 overflow-hidden md:grid-cols-12"
           >
-            <div className={`md:col-span-4 ${i % 2 === 1 ? "md:order-2" : ""}`}>
-              <div className="overflow-hidden rounded-2xl">
-                <img
-                  src={c.img}
-                  alt={c.alt}
-                  loading="lazy"
-                  className="aspect-[4/5] w-full object-cover"
-                />
-              </div>
+            <div className={`md:col-span-5 ${i % 2 === 1 ? "md:order-2" : ""}`}>
+              <img
+                src={c.img}
+                alt={c.alt}
+                loading="lazy"
+                className="img-apple h-full max-h-[420px] w-full object-cover"
+              />
             </div>
-            <div className={`md:col-span-8 ${i % 2 === 1 ? "md:order-1" : ""}`}>
-              <p className="font-mono text-[10px] tracking-[0.25em] text-gold-500 uppercase">
+            <div className={`p-7 md:col-span-7 md:p-9 ${i % 2 === 1 ? "md:order-1" : ""}`}>
+              <p className="font-mono2 text-[10px] tracking-[0.22em] text-gold-500 uppercase">
                 {c.kicker}
               </p>
-              <h2 className="font-display mt-1 text-2xl font-extrabold md:text-3xl">
+              <h2 className="mt-2 text-[26px] font-semibold tracking-tight md:text-[30px]">
                 {c.title}
               </h2>
-              <dl className="mt-4">
+              <dl className="mt-5">
                 {c.rows.map(([term, desc]) => (
-                  <div key={term} className="grid grid-cols-[110px_1fr] gap-3 border-b border-white/10 py-2.5">
-                    <dt className="font-mono text-[10px] tracking-widest text-gold-600 uppercase">
+                  <div key={term} className="grid grid-cols-[96px_1fr] gap-3 border-b border-white/10 py-3">
+                    <dt className="font-mono2 text-[10px] font-semibold tracking-[0.14em] text-gold-500 uppercase">
                       {term}
                     </dt>
-                    <dd className="font-mono text-[12px] leading-relaxed text-mist-300">
+                    <dd className="text-[13px] leading-relaxed text-mist-300">
                       {desc}
                     </dd>
                   </div>
@@ -159,7 +155,7 @@ export default function MissionsPage() {
                 {c.tags.map((t) => (
                   <span
                     key={t}
-                    className="rounded-full border border-gold-600/50 bg-gold-900/30 px-3 py-1 font-mono text-[10px] tracking-wide text-gold-300 uppercase"
+                    className="rounded-full border border-gold-600/40 bg-gold-900/25 px-3 py-1 font-mono2 text-[10px] tracking-[0.08em] text-gold-300 uppercase"
                   >
                     {t}
                   </span>
@@ -170,19 +166,16 @@ export default function MissionsPage() {
         ))}
       </section>
 
-      {/* Statement */}
-      <section className="border-y border-white/10 bg-obsidian">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-16 md:grid-cols-12 md:py-20">
+      <section className="border-y border-white/[0.07] bg-obsidian/60">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-5 py-16 md:grid-cols-12 md:py-24">
           <div className="md:col-span-6">
-            <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-              O sentido das missões
-            </p>
-            <p className="font-display mt-4 text-3xl leading-tight font-extrabold md:text-4xl">
+            <Eyebrow>O sentido das missões</Eyebrow>
+            <p className="headline mt-4 text-[30px] md:text-[40px]">
               Essas missões não são o produto.{" "}
-              <em className="gold-glow text-gold-300">São a prova.</em>
+              <span className="text-gold-300">São a prova.</span>
             </p>
           </div>
-          <p className="font-mono text-sm leading-relaxed text-mist-300 md:col-span-6 md:self-center">
+          <p className="text-[15px] leading-relaxed text-mist-300 md:col-span-6 md:self-center">
             Elas demonstram uma capacidade construída ao longo de décadas:
             entrar em ambientes complexos, compreender a técnica, dialogar
             com decisores, conectar competências e transformar problemas em
@@ -191,28 +184,22 @@ export default function MissionsPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-20">
-        <div className="gold-border grid grid-cols-1 items-center gap-6 rounded-3xl bg-obsidian p-8 md:grid-cols-[1fr_auto] md:p-10">
+      <section className="mx-auto max-w-5xl px-5 py-16 md:py-24">
+        <div className="card-soft grid grid-cols-1 items-center gap-6 p-8 md:grid-cols-[1fr_auto] md:p-10">
           <div>
-            <p className="font-mono text-[10px] tracking-[0.25em] text-gold-500 uppercase">
-              Your next mission
-            </p>
-            <p className="font-display mt-2 max-w-xl text-3xl leading-tight font-extrabold md:text-4xl">
+            <Eyebrow>Your next mission</Eyebrow>
+            <p className="headline mt-3 max-w-xl text-[28px] md:text-[36px]">
               Qual é a próxima missão que precisa ser estruturada?
             </p>
-            <p className="mt-2 max-w-xl font-mono text-xs leading-relaxed text-mist-500">
+            <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-mist-500">
               Quando o desafio exige profundidade técnica, julgamento
               estratégico e integração de competências, há uma conversa a ser
               iniciada.
             </p>
           </div>
-          <a
-            className="rounded-full bg-gold-500 px-6 py-3 text-center font-mono text-[11px] font-bold tracking-widest text-black uppercase transition hover:bg-gold-400"
-            href={`mailto:${EMAIL}?subject=Quero%20conversar%20sobre%20uma%20missão%20estratégica`}
-          >
+          <PrimaryCta href={`mailto:${EMAIL}?subject=Quero%20conversar%20sobre%20uma%20missão%20estratégica`}>
             Iniciar conversa ↗
-          </a>
+          </PrimaryCta>
         </div>
       </section>
     </div>

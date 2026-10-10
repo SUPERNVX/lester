@@ -3,13 +3,13 @@
 @theme {
   /* Base — preto */
   --color-void: #000000;
-  --color-obsidian: #0a0a0b;
+  --color-obsidian: #0a0a0c;
   --color-coal: #131316;
   --color-carbon: #1c1c21;
 
   /* Dourado — escala principal */
   --color-gold-50: #fbf7e8;
-  --color-gold-100: #f6ecC8;
+  --color-gold-100: #f6ecc8;
   --color-gold-200: #eedd9a;
   --color-gold-300: #e5c86a;
   --color-gold-400: #dcb544;
@@ -19,7 +19,7 @@
   --color-gold-800: #4d3b0e;
   --color-gold-900: #2a2008;
 
-  /* Âmbar de apoio (compat com amber atual) */
+  /* Âmbar de apoio */
   --color-ember-400: #fbbf24;
   --color-ember-500: #f59e0b;
   --color-ember-600: #d97706;
@@ -36,8 +36,15 @@
   --color-danger: #f87171;
   --color-info: #60a5fa;
 
-  --font-display: "Cinzel", ui-serif, Georgia, serif;
-  --font-mono2: "JetBrains Mono", ui-monospace, monospace;
+  /* Tipografia — Fraunces (display serifado variável com optical sizing)
+     + Inter Tight (corpo) + JetBrains Mono (eyebrows / rótulos). */
+  --font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter Tight Variable", "Inter Tight", -apple-system,
+    BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial,
+    ui-sans-serif, system-ui, sans-serif;
+  --font-serif-accent: "Fraunces Variable", "Fraunces", ui-serif, Georgia,
+    serif;
+  --font-mono2: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -51,17 +58,143 @@ body,
 body {
   background: var(--color-void);
   color: var(--color-mist-100);
-  font-family: var(--font-mono2);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.011em;
   overflow-x: hidden;
   margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 .font-display {
   font-family: var(--font-display);
 }
 
+.font-accent {
+  font-family: var(--font-serif-accent);
+}
+
+/* Eyebrow Apple: rótulo pequeno, mono, dourado, espaçado */
+.eyebrow {
+  font-family: var(--font-mono2);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-gold-500);
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  color: var(--color-mist-100);
+}
+
+.font-accent {
+  font-optical-sizing: auto;
+}
+
+.subhead {
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  color: var(--color-mist-300);
+}
+
+@media (min-width: 768px) {
+  .subhead {
+    font-size: 19px;
+  }
+}
+
+/* Card Apple: superfície sutil, borda 1px branca translúcida, raio grande */
+.card-soft {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+}
+
+.card-soft:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* ————— Dither (eco do pre-loader: Bayer 4x4 em dourado) ————— */
+.dither-dots {
+  background-image: radial-gradient(rgba(212, 175, 55, 0.32) 1px, transparent 1.4px);
+  background-size: 5px 5px;
+}
+
+.dither-dots-faint {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1.3px);
+  background-size: 6px 6px;
+}
+
+.dither-strip {
+  height: 14px;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.4) 1px, transparent 1.35px);
+  background-size: 6px 6px;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  opacity: 0.55;
+}
+
+.dither-panel {
+  position: relative;
+  isolation: isolate;
+}
+
+.dither-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.16) 1px, transparent 1.4px);
+  background-size: 7px 7px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 55%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dither-frame {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dither-frame::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 30px;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.35) 1px, transparent 1.3px);
+  background-size: 6px 6px;
+  mask-image: linear-gradient(to bottom, black, transparent 32%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 32%);
+  pointer-events: none;
+}
+
+.img-apple {
+  filter: saturate(0.88) contrast(1.04);
+}
+
 .gold-glow {
-  text-shadow: 0 0 12px rgba(212, 175, 55, 0.45);
+  text-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
 }
 
 .gold-border {

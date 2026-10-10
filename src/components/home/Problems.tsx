@@ -1,3 +1,5 @@
+import { SectionHead } from "../Apple";
+
 const PROBLEMS = [
   {
     t: "Decisões críticas sob incerteza",
@@ -35,27 +37,28 @@ const PROBLEMS = [
 
 export default function Problems() {
   return (
-    <section className="mx-auto max-w-6xl px-6 pb-16 md:pb-20">
-      <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-        Diagnóstico de entrada
-      </p>
-      <h2 className="font-display mt-4 max-w-xl text-3xl leading-tight font-extrabold md:text-4xl">
-        Problemas que normalmente chegam até mim.
-      </h2>
-      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {PROBLEMS.map((p, i) => (
-          <div key={p.t} className="gold-border rounded-2xl bg-obsidian p-5">
-            <p className="font-mono text-[11px] text-gold-600">
-              {String(i + 1).padStart(2, "0")}
-            </p>
-            <p className="font-display mt-1 text-lg leading-snug font-bold">
-              {p.t}
-            </p>
-            <p className="mt-1.5 font-mono text-[11px] leading-relaxed text-mist-500">
-              {p.d}
-            </p>
-          </div>
-        ))}
+    <section className="border-t border-white/[0.07] bg-obsidian/60">
+      <div className="mx-auto max-w-5xl px-5 py-20 md:py-28">
+        <SectionHead
+          eyebrow="Diagnóstico de entrada"
+          title="Problemas que normalmente chegam até mim."
+          sub="Oito padrões recorrentes — se um deles descreve seu momento, vale uma conversa."
+        />
+        <div className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {PROBLEMS.map((p, i) => (
+            <div key={p.t} className="card-soft p-5 transition">
+              <p className="font-mono2 text-[11px] font-semibold text-gold-600">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <p className="mt-2 text-[16px] leading-snug font-semibold tracking-tight text-mist-100">
+                {p.t}
+              </p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-mist-500">
+                {p.d}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -1,62 +1,43 @@
-const PROOFS = [
-  { value: "40+", label: "projetos estratégicos e de P&D" },
-  { value: "Board & Advisory", label: "atuação nacional e internacional" },
-  { value: "10+", label: "empresas e startups como fundador, sócio ou investidor" },
-  { value: "20+", label: "mestres e doutores formados" },
-];
+import { SectionHead } from "../Apple";
 
 export default function Proof() {
   return (
-    <>
-      <section aria-label="Indicadores de experiência" className="border-b border-white/10">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 py-10 lg:grid-cols-4">
-          {PROOFS.map((p) => (
-            <div key={p.value}>
-              <p className="font-mono text-2xl font-semibold text-gold-300">
-                {p.value}
-              </p>
-              <p className="mt-1 font-mono text-[11px] leading-relaxed text-mist-500">
-                {p.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-16 md:grid-cols-12 md:py-20">
-        <div className="md:col-span-8">
-          <p className="font-mono text-[11px] tracking-[0.25em] text-gold-500 uppercase">
-            Quando os stakes são altos e o caminho não é claro
-          </p>
-          <h2 className="font-display mt-4 text-3xl leading-tight font-extrabold md:text-5xl">
+    <section className="mx-auto max-w-5xl px-5 py-20 md:py-28">
+      <SectionHead
+        eyebrow="Quando os stakes são altos e o caminho não é claro"
+        title={
+          <>
             Organizações sofrem por falta de{" "}
-            <em className="gold-glow text-gold-300">arquitetura.</em>
-          </h2>
-          <div className="mt-6 max-w-2xl space-y-3 font-mono text-sm leading-relaxed text-mist-300">
-            <p>
-              Problemas relevantes atravessam áreas, interesses, restrições e
-              horizontes de tempo. Quando tecnologia, negócio, governança,
-              capital e pessoas são tratados separadamente, a organização
-              perde velocidade e aumenta sua exposição ao risco.
-            </p>
-            <p>
-              Meu papel é ler o sistema completo, identificar o que está
-              oculto e construir uma arquitetura de decisão que possa ser
-              defendida, executada e governada.
-            </p>
-          </div>
+            <span className="text-gold-300">arquitetura.</span>
+          </>
+        }
+      />
+      <div className="mt-10 grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div className="space-y-4 text-[16px] leading-relaxed text-mist-300 md:col-span-7">
+          <p>
+            Problemas relevantes atravessam áreas, interesses, restrições e
+            horizontes de tempo. Quando tecnologia, negócio, governança,
+            capital e pessoas são tratados separadamente, a organização perde
+            velocidade e aumenta sua exposição ao risco.
+          </p>
+          <p>
+            Meu papel é ler o sistema completo, identificar o que está oculto
+            e construir uma arquitetura de decisão que possa ser defendida,
+            executada e governada.
+          </p>
         </div>
-        <aside className="md:col-span-4">
-          <div className="rounded-2xl border border-gold-500/25 bg-gold-900/20 p-6">
-            <p className="font-mono text-[10px] tracking-widest text-gold-500 uppercase">
+        <aside className="md:col-span-5">
+          <div className="dither-panel card-soft relative overflow-hidden p-7">
+            <p className="font-mono2 text-[10px] tracking-[0.22em] text-gold-500 uppercase">
               Strategic principle
             </p>
-            <p className="font-display mt-2 text-2xl leading-snug font-bold text-gold-200">
+            <p className="font-accent mt-3 text-[26px] leading-snug font-bold text-gold-200">
               “I connect what others are not seeing.”
             </p>
+            <div aria-hidden="true" className="dither-dots mt-6 h-8 opacity-40" />
           </div>
         </aside>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

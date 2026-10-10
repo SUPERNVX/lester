@@ -1,16 +1,18 @@
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail } from "lucide-react";
 import Footer from "../Footer";
+import { DitherStrip, Eyebrow } from "../Apple";
 
 const EMAIL = "lesteraf@gmail.com";
 
 export default function Closing() {
   return (
     <>
-      <section className="mx-auto max-w-6xl px-6 py-16 md:py-20">
-        <p className="font-display max-w-3xl text-3xl leading-tight font-extrabold md:text-4xl">
+      <section className="mx-auto max-w-3xl px-5 py-20 text-center md:py-28">
+        <Eyebrow>Mentorship & leadership</Eyebrow>
+        <p className="headline mt-4 text-[30px] md:text-[42px]">
           Não formo seguidores. Formo pessoas capazes de liderar a próxima missão.
         </p>
-        <div className="mt-5 grid max-w-4xl gap-4 font-mono text-sm leading-relaxed text-mist-300 md:grid-cols-2">
+        <div className="mx-auto mt-6 grid max-w-2xl gap-4 text-left text-[15px] leading-relaxed text-mist-300 md:grid-cols-2">
           <p>
             Liderança não consiste em concentrar conhecimento, poder ou
             protagonismo. Consiste em compreender o que move cada pessoa e
@@ -23,43 +25,41 @@ export default function Closing() {
             conduzir os próximos projetos.
           </p>
         </div>
+        <DitherStrip className="mx-auto mt-10 max-w-xl" />
       </section>
 
-      <section id="contato" className="bg-gold-500 text-black">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-14 md:grid-cols-2 md:py-16">
-          <div>
-            <p className="font-mono text-[11px] font-bold tracking-[0.25em] uppercase opacity-70">
-              Bring me your hardest decision
-            </p>
-            <h2 className="font-display mt-3 text-3xl leading-tight font-extrabold md:text-4xl">
-              Traga o problema que ninguém conseguiu estruturar.
-            </h2>
-            <p className="mt-3 max-w-md font-mono text-[13px] leading-relaxed opacity-80">
-              Engenharia, tecnologia, estratégia, governança ou novos
-              negócios. Traga o problema, a decisão ou a oportunidade que
-              precisa ser estruturada.
-            </p>
-          </div>
-          <div className="flex flex-col items-start justify-center gap-3 font-mono text-xs font-bold md:items-end">
+      <section id="contato" className="mx-auto max-w-5xl px-5 pb-20 md:pb-28">
+        <div className="dither-panel relative overflow-hidden rounded-[32px] bg-gradient-to-b from-gold-300 via-gold-500 to-gold-600 px-6 py-14 text-center text-black md:py-20">
+          <p className="relative font-mono2 text-[11px] font-bold tracking-[0.22em] uppercase opacity-70">
+            Bring me your hardest decision
+          </p>
+          <h2 className="relative mx-auto mt-3 max-w-2xl text-[32px] leading-[1.05] font-bold tracking-[-0.03em] md:text-[52px]">
+            Traga o problema que ninguém conseguiu estruturar.
+          </h2>
+          <p className="relative mx-auto mt-4 max-w-md text-[15px] leading-relaxed opacity-75">
+            Engenharia, tecnologia, estratégia, governança ou novos negócios.
+            Traga a decisão ou a oportunidade que precisa ser estruturada.
+          </p>
+          <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
             <a
-              className="flex items-center gap-2 rounded-full bg-black px-6 py-3 tracking-widest text-gold-300 uppercase transition hover:bg-coal"
+              className="inline-flex items-center gap-2 rounded-full bg-black px-7 py-3.5 text-[13px] font-semibold tracking-tight text-gold-300 transition hover:bg-coal"
               href={`mailto:${EMAIL}?subject=Tenho%20uma%20decis%C3%A3o%20complexa%20para%20avaliar`}
             >
-              <Mail size={14} /> Iniciar conversa estratégica
+              <Mail size={15} /> Iniciar conversa estratégica
             </a>
             <a
-              className="flex items-center gap-2 rounded-full border-2 border-black/70 px-6 py-2.5 tracking-widest uppercase transition hover:bg-black hover:text-gold-300"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-black/25 px-7 py-3 text-[13px] font-semibold tracking-tight transition hover:bg-black hover:text-gold-300"
               href="https://www.linkedin.com/in/lesterfaria/"
             >
               Conectar no LinkedIn ↗
             </a>
-            <a
-              className="flex items-center gap-2 font-bold tracking-widest uppercase opacity-80 transition hover:opacity-100"
-              href="https://www.instagram.com/prof_dr_lester/"
-            >
-              <MessageCircle size={14} /> Acompanhar no Instagram ↗
-            </a>
           </div>
+          <a
+            className="relative mt-5 inline-block text-[12px] font-semibold tracking-tight opacity-70 transition hover:opacity-100"
+            href="https://www.instagram.com/prof_dr_lester/"
+          >
+            Acompanhar no Instagram ↗
+          </a>
         </div>
       </section>
 
