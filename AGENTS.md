@@ -17,8 +17,12 @@ No test runner is installed. Verify with `build` + `lint`.
 - `src/App.tsx` — hash router (no react-router). Routes: `#/`, `#/advisory`, `#/complex-systems`, `#/deep-tech`, `#/alpha-finder`, `#/missions`. New pages must be wired there with `Navbar active` + `Footer` and scroll-to-top on `hashchange`.
 - `src/pages/` — one file per route (`Advisory`, `ComplexSystems`, `DeepTech`, `AlphaFinder`, `MissionsPage`).
 - `src/components/home/` — home sections (`Proof`, `Problems`, `Services`, `Trajectory`, `Missions`, `Closing`). Shared chrome: `Navbar`, `Footer`, `HomeHero`, `HydrogenPreloader`.
-- `src/assets/` — images (`.webp`) imported directly into components. `src/assets/vite.svg`, `react.svg` are template leftovers.
+- `src/assets/` — images (`.webp`) imported directly into components.
 - `dist/` is build output — never edit.
+
+## Preloader
+
+- `HydrogenPreloader` (three.js) shows only on first visit; `App.tsx` persists `lester:visited=1` in `localStorage` on completion and skips it on repeat visits. If storage is unavailable it shows every time (fail-open).
 
 ## TypeScript strictness (`tsconfig.app.json`)
 
@@ -36,4 +40,4 @@ Fails build on: unused locals/params (`noUnusedLocals`, `noUnusedParameters`), w
 - Gate animation on `useReducedMotion()` — `index.css` already kills marquee/dither/tegaki animation under `prefers-reduced-motion`; match that in new components.
 - React Compiler is on via Babel (`vite.config.ts` — `reactCompilerPreset`). Don't add manual `memo`/`useMemo` just for re-renders.
 - Handwriting effect: `tegaki/react` (`TegakiRenderer`, `tegaki/fonts/caveat`) — see `HomeHero.tsx`.
-- Heavy one-offs: `three` (preloader), `mathjs/number` (`GradualBlur`), `lucide-react` icons.
+- Heavy one-offs: `three` (preloader), `lucide-react` icons.

@@ -19,8 +19,27 @@ function routeFromHash(): string {
   return window.location.hash || "#/";
 }
 
+const VISITED_KEY = "lester:visited";
+
+function hasVisited(): boolean {
+  try {
+    return window.localStorage.getItem(VISITED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markVisited(): void {
+  try {
+    window.localStorage.setItem(VISITED_KEY, "1");
+  } catch {
+    // armazenamento indisponível — mostra o preloader de novo na próxima visita
+  }
+}
+
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
+  const [seenBefore] = useState(hasVisited);
+  const [loaded, setLoaded] = useState(seenBefore);
   const [route, setRoute] = useState(routeFromHash);
 
   useEffect(() => {
@@ -34,8 +53,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-void text-mist-100">
-      {!loaded && (
-        <HydrogenPreloader durationMs={7000} onComplete={() => setLoaded(true)} />
+      {seenBefore || loaded ? null : (
+        <HydrogenPreloader
+          durationMs={7000}
+          onComplete={() => {
+            markVisited();
+            setLoaded(true);
+          }}
+        />
       )}
 
       {route === "#/advisory" ? (
