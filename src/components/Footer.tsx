@@ -1,3 +1,5 @@
+import { motion, useReducedMotion } from "motion/react";
+
 const EMAIL = "lesteraf@gmail.com";
 
 const PRACTICE = [
@@ -9,8 +11,15 @@ const PRACTICE = [
 ];
 
 export default function Footer() {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <footer className="border-t border-white/[0.07]">
+    <motion.footer
+      className="border-t border-white/[0.07]"
+      initial={reduceMotion ? false : { y: 12 }}
+      animate={{ y: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
+    >
       <div className="mx-auto grid max-w-5xl grid-cols-2 gap-10 px-5 py-12 md:grid-cols-4">
         <div className="col-span-2 md:col-span-2">
           <p className="flex items-center gap-2">
@@ -49,6 +58,6 @@ export default function Footer() {
           <span>Strategic clarity for complex decisions.</span>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }

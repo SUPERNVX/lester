@@ -34,7 +34,7 @@ export default function Proof() {
             <p className="font-accent mt-3 text-[26px] leading-snug font-bold text-gold-200">
               “I connect what others are not seeing.”
             </p>
-            <div aria-hidden="true" className="dither-dots mt-6 h-8 opacity-40" />
+            <div aria-hidden="true" className="dither-loading mt-6 h-8 opacity-70" />
           </div>
         </aside>
       </div>

@@ -1,4 +1,6 @@
+import { motion, useReducedMotion } from "motion/react";
 import heroBg from "../assets/fab.webp";
+import OrbitDitherFrame from "../components/OrbitDitherFrame";
 import { DitherStrip, Eyebrow, PrimaryCta } from "../components/Apple";
 
 const EMAIL = "lesteraf@gmail.com";
@@ -58,6 +60,8 @@ const OUTCOMES = [
 ];
 
 export default function DeepTech() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className="min-h-screen bg-void text-mist-100">
       <section className="dither-panel relative overflow-hidden">
@@ -65,9 +69,10 @@ export default function DeepTech() {
           src={heroBg}
           alt=""
           aria-hidden="true"
-          className="img-apple pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-25"
+          className="deeptech-bg img-apple pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-50"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/85 to-void/40" />
+        <OrbitDitherFrame className="inset-5 md:inset-8 rounded-[28px]" duration={14} />
+        <div className="absolute inset-0 bg-gradient-to-r from-void/90 via-void/70 to-void/20" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-void to-transparent" />
         <div className="relative mx-auto max-w-5xl px-5 py-16 md:py-24">
           <Eyebrow>Deep Tech Ventures</Eyebrow>
@@ -95,7 +100,7 @@ export default function DeepTech() {
         <div className="md:col-span-5">
           <Eyebrow>O vale entre tecnologia e negócio</Eyebrow>
           <h2 className="headline mt-4 text-[30px] md:text-[40px]">
-            Boas tecnologias também fracassam.
+            Boas tecnologias também <motion.span className="failure-highlight" initial={reduceMotion ? false : { backgroundSize: "0% 100%" }} whileInView={{ backgroundSize: "100% 100%" }} viewport={{ once: true }} transition={{ duration: reduceMotion ? 0 : 0.8, delay: reduceMotion ? 0 : 0.2 }}>fracassam</motion.span>.
           </h2>
         </div>
         <div className="space-y-4 text-[15px] leading-relaxed text-mist-300 md:col-span-7">

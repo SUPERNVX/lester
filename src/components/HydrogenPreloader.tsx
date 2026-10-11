@@ -327,6 +327,7 @@ export default function HydrogenPreloader({
 
     const ringGeo = new THREE.BufferGeometry();
     const ringArr = new Float32Array(MAX * RING_SEG * 2 * 3);
+    ringArr.fill(9999);
     ringGeo.setAttribute(
       "position",
       new THREE.BufferAttribute(ringArr, 3).setUsage(THREE.DynamicDrawUsage)
@@ -344,6 +345,7 @@ export default function HydrogenPreloader({
     const trailGeo = new THREE.BufferGeometry();
     const SEGS = TRAIL - 1;
     const trailArr = new Float32Array(MAX * SEGS * 2 * 3);
+    trailArr.fill(9999);
     trailGeo.setAttribute(
       "position",
       new THREE.BufferAttribute(trailArr, 3).setUsage(THREE.DynamicDrawUsage)
@@ -506,6 +508,8 @@ export default function HydrogenPreloader({
 
     const tick = (now: number) => {
       if (disposed) return;
+      // Keep the animation clock independent from the geometry cadence: an occasional
+      // dropped frame should slow the update rate, not freeze particle activation.
       const elapsed = now - start;
       const t = Math.min(1, elapsed / duration);
       const elapsedSec = elapsed / 1000;
@@ -545,9 +549,8 @@ export default function HydrogenPreloader({
 
       let launchY = 0;
       if (t >= P3_END) {
-        const lt = (t - P3_END) / (1 - P3_END);
+        const lt = Math.min(1, (t - P3_END) / (1 - P3_END));
         launchY = Math.pow(lt, 2.2) * 95;
-        // Slide do overlay junto com o foguete (mesmo easing da decolagem).
         if (root) {
           root.style.transform = `translateY(${(-Math.pow(lt, 2.2) * 100).toFixed(3)}%)`;
         }
@@ -657,12 +660,7 @@ export default function HydrogenPreloader({
           const s2 = (s + 1) % RING_SEG;
           const o = rBase + s * 6;
           if (!on) {
-            ringArr[o] = ax;
-            ringArr[o + 1] = ay;
-            ringArr[o + 2] = az;
-            ringArr[o + 3] = ax;
-            ringArr[o + 4] = ay;
-            ringArr[o + 5] = az;
+            ringArr.fill(9999, o, o + 6);
           } else {
             const l1 = (i * RING_SEG + s) * 3;
             const l2 = (i * RING_SEG + s2) * 3;
@@ -680,12 +678,7 @@ export default function HydrogenPreloader({
         for (let k = 0; k < SEGS; k++) {
           const o = tBase + k * 6;
           if (!on) {
-            trailArr[o] = ax;
-            trailArr[o + 1] = ay;
-            trailArr[o + 2] = az;
-            trailArr[o + 3] = ax;
-            trailArr[o + 4] = ay;
-            trailArr[o + 5] = az;
+            trailArr.fill(9999, o, o + 6);
           } else {
             trailArr[o] = ax + trailHist[hBase + k * 3];
             trailArr[o + 1] = ay + trailHist[hBase + k * 3 + 1];

@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "motion/react";
 import { Mail } from "lucide-react";
 import Footer from "../Footer";
 import { DitherStrip, Eyebrow } from "../Apple";
@@ -5,6 +6,7 @@ import { DitherStrip, Eyebrow } from "../Apple";
 const EMAIL = "lesteraf@gmail.com";
 
 export default function Closing() {
+  const reduceMotion = useReducedMotion();
   return (
     <>
       <section className="mx-auto max-w-3xl px-5 py-20 text-center md:py-28">
@@ -29,7 +31,13 @@ export default function Closing() {
       </section>
 
       <section id="contato" className="mx-auto max-w-5xl px-5 pb-20 md:pb-28">
-        <div className="dither-panel relative overflow-hidden rounded-[32px] bg-gradient-to-b from-gold-300 via-gold-500 to-gold-600 px-6 py-14 text-center text-black md:py-20">
+        <motion.div
+          className="dither-panel relative overflow-hidden rounded-[32px] bg-gradient-to-b from-gold-300 via-gold-500 to-gold-600 px-6 py-14 text-center text-black md:py-20"
+          initial={reduceMotion ? false : { y: 16 }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: reduceMotion ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
           <p className="relative font-mono2 text-[11px] font-bold tracking-[0.22em] uppercase opacity-70">
             Bring me your hardest decision
           </p>
@@ -60,7 +68,7 @@ export default function Closing() {
           >
             Acompanhar no Instagram ↗
           </a>
-        </div>
+        </motion.div>
       </section>
 
       <Footer />

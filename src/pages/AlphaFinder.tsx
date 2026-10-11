@@ -1,4 +1,5 @@
 import heroBg from "../assets/facens.webp";
+import OrbitDitherFrame from "../components/OrbitDitherFrame";
 import { DitherStrip, Eyebrow, PrimaryCta } from "../components/Apple";
 
 const EMAIL = "lesteraf@gmail.com";
@@ -38,9 +39,10 @@ export default function AlphaFinder() {
           src={heroBg}
           alt=""
           aria-hidden="true"
-          className="img-apple pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-25"
+          className="alpha-bg img-apple pointer-events-none absolute inset-0 h-full w-full object-cover object-top opacity-45"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/85 to-void/40" />
+        <OrbitDitherFrame className="inset-5 md:inset-8 rounded-[28px]" duration={15} />
+        <div className="absolute inset-0 bg-gradient-to-r from-void/90 via-void/72 to-void/25" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-void to-transparent" />
         <div className="relative mx-auto max-w-5xl px-5 py-16 text-center md:py-24">
           <p className="font-mono2 text-[11px] font-semibold tracking-[0.22em] text-gold-500 uppercase">

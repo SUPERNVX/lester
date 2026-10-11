@@ -216,3 +216,180 @@ p {
   background: #7a5e16;
   border-radius: 2px;
 }
+
+/* Hero handwriting + continuously moving proof points. */
+.hero-handdraw {
+  min-height: 1.05em;
+}
+
+.hero-title-line {
+  display: block;
+}
+
+.hero-title-line .hero-handdraw {
+  color: var(--color-mist-100);
+}
+
+.hero-title-accent .hero-handdraw {
+  color: #e5c86a;
+}
+
+.stats-marquee-track {
+  animation: stats-marquee 38s linear infinite;
+  will-change: transform;
+}
+
+.dither-loading {
+  position: relative;
+  overflow: hidden;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.14) 1px, transparent 1.35px);
+  background-size: 6px 6px;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+.dither-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -30%;
+  width: 30%;
+  background-image: radial-gradient(rgba(255, 218, 102, 0.95) 1px, transparent 1.45px);
+  background-size: 6px 6px;
+  animation: dither-loading-sweep 2.8s ease-in-out infinite;
+}
+
+@keyframes dither-loading-sweep {
+  0% { transform: translateX(0); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(460%); opacity: 0; }
+}
+
+.orbit-dither-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(229, 200, 106, 0.3);
+  border-radius: inherit;
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.12);
+  pointer-events: none;
+}
+
+.orbit-dither-svg {
+  overflow: visible;
+}
+
+.orbit-dither-trace {
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.85));
+  animation: orbit-dither-trace 16s linear infinite;
+}
+
+@keyframes orbit-dither-trace {
+  to { stroke-dashoffset: -1000; }
+}
+
+
+.alpha-bg,
+.missions-bg {
+  filter: saturate(0.94) contrast(1.02) brightness(1.22);
+}
+
+.stats-marquee-track:hover,
+.stats-marquee-track:focus-within {
+  animation-play-state: paused;
+}
+
+@keyframes stats-marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* Dithered image frame and subtle image lift on service pages. */
+.advisory-bg,
+.systems-bg {
+  filter: saturate(0.92) contrast(1.02) brightness(1.2);
+}
+
+.deeptech-bg {
+  filter: saturate(0.96) contrast(1.03) brightness(1.12);
+}
+
+.advisory-dither-frame::after,
+.systems-dither-frame::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.65) 1px, transparent 1.45px);
+  background-size: 6px 6px;
+  mask-image: conic-gradient(from 0deg, transparent 0 8%, black 12% 28%, transparent 32% 42%, black 48% 68%, transparent 72% 82%, black 88% 96%, transparent 100%);
+  -webkit-mask-image: conic-gradient(from 0deg, transparent 0 8%, black 12% 28%, transparent 32% 42%, black 48% 68%, transparent 72% 82%, black 88% 96%, transparent 100%);
+}
+
+.advisory-dither-frame::before,
+.systems-dither-frame::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid rgba(229, 200, 106, 0.22);
+}
+
+.network-grid::before {
+  content: "";
+  position: absolute;
+  inset: 18% 12%;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.13) 1px, transparent 1px);
+  background-size: 13px 13px;
+  mask-image: radial-gradient(ellipse, black, transparent 75%);
+  pointer-events: none;
+}
+
+.failure-highlight {
+  color: #fca5a5;
+  background-image: linear-gradient(transparent 57%, rgba(220, 38, 38, 0.42) 57%, rgba(220, 38, 38, 0.42) 94%, transparent 94%);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  padding-inline: 0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .stats-marquee-track {
+    animation: none;
+  }
+
+  .dither-loading::after,
+  .orbit-dither-trace {
+    animation: none;
+  }
+
+  .gold-footer-overlay {
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+
+  .hero-handdraw [data-tegaki="canvas"] {
+    display: none !important;
+  }
+
+  .hero-handdraw [data-tegaki="overlay"] {
+    opacity: 1 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .advisory-dither-frame,
+  .systems-dither-frame {
+    right: 0.75rem;
+    width: 43%;
+    opacity: 0.55;
+  }
+}

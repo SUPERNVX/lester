@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "motion/react";
 import portrait from "../assets/hero-lester.webp";
 import { DitherStrip, Eyebrow, PrimaryCta } from "../components/Apple";
 
@@ -74,6 +75,8 @@ const OUTCOMES = [
 ];
 
 export default function Advisory() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className="min-h-screen bg-void text-mist-100">
       {/* Hero Apple */}
@@ -82,9 +85,10 @@ export default function Advisory() {
           src={portrait}
           alt=""
           aria-hidden="true"
-          className="img-apple pointer-events-none absolute inset-y-0 right-0 h-full w-1/2 object-cover object-top opacity-20"
+          className="advisory-bg img-apple pointer-events-none absolute inset-y-0 right-0 h-full w-1/2 object-cover object-top opacity-30"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/90 to-void/40" />
+        <motion.div aria-hidden="true" className="advisory-dither-frame pointer-events-none absolute inset-y-5 right-5 w-[calc(50%-2rem)] rounded-[28px] border border-gold-300/20" animate={reduceMotion ? undefined : { opacity: [0.4, 0.85, 0.4] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-void via-void/85 to-void/35" />
         <div className="relative mx-auto max-w-5xl px-5 py-16 md:py-24">
           <Eyebrow>Executive Advisory</Eyebrow>
           <h1 className="headline mt-4 max-w-3xl text-[40px] md:text-[64px]">
@@ -117,8 +121,8 @@ export default function Advisory() {
           </h2>
         </div>
         <div className="space-y-3 md:col-span-7">
-          {SIGNALS.map((s) => (
-            <div key={s.n} className="card-soft flex gap-4 p-5">
+          {SIGNALS.map((s, index) => (
+            <motion.div key={s.n} initial={reduceMotion ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.09 }} className="card-soft flex gap-4 p-5">
               <span className="font-mono2 text-[12px] font-semibold text-gold-500">
                 {s.n}
               </span>
@@ -128,7 +132,7 @@ export default function Advisory() {
                   {s.d}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>

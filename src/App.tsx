@@ -71,7 +71,7 @@ export default function App() {
       ) : (
         <>
           <Navbar />
-          <HomeHero />
+          <HomeHero loaded={loaded} />
           <Proof />
           <Problems />
           <Services />
