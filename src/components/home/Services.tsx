@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { SectionHead } from "../Apple";
@@ -68,12 +68,27 @@ const STEPS = [
 export default function Services() {
   const timelineRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  // O efeito pinado (sticky + deslocamento horizontal pelo scroll vertical)
+  // só existe no layout lg. Abaixo disso a timeline é um carrossel nativo,
+  // então o transform precisa ficar desligado para não brigar com o gesto.
+  const [pinEnabled, setPinEnabled] = useState(
+    () => window.matchMedia("(min-width: 1024px)").matches,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => setPinEnabled(query.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: timelineRef,
     offset: ["start start", "end end"],
   });
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-56%"]);
   const timelineProgress = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const trackMotion = reduceMotion || !pinEnabled;
 
   return (
     <>
@@ -106,14 +121,14 @@ export default function Services() {
             eyebrow="Complex Decision Architecture"
             title="Meu trabalho não começa pela tecnologia. Começa pelo problema."
           />
-          <div className="mt-12 overflow-x-auto pb-5 lg:overflow-visible" tabIndex={0} aria-label="Timeline horizontal do método">
+          <div className="mt-12 snap-x snap-mandatory overflow-x-auto pb-5 lg:snap-none lg:overflow-visible" tabIndex={0} aria-label="Timeline horizontal do método">
             <p className="sr-only">Quatro etapas do método, da leitura do sistema à governança do resultado.</p>
             <motion.ol
-              style={reduceMotion ? undefined : { x }}
+              style={trackMotion ? undefined : { x }}
               className="method-timeline-track relative grid min-w-max grid-cols-4 gap-4 pb-4 lg:gap-6"
             >
               <div aria-hidden="true" className="pointer-events-none absolute left-0 right-0 top-[13px] h-px bg-gold-600/25">
-                <motion.div className="h-full origin-left bg-gold-400" style={{ scaleX: reduceMotion ? 1 : timelineProgress }} />
+                <motion.div className="h-full origin-left bg-gold-400" style={trackMotion ? { scaleX: 1 } : { scaleX: timelineProgress }} />
               </div>
               {STEPS.map((step, index) => (
                 <motion.li
@@ -122,7 +137,7 @@ export default function Services() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.55, delay: reduceMotion ? 0 : index * 0.08 }}
-                  className="relative w-[min(76vw,320px)] border-t border-white/10 pt-7 lg:w-[min(29vw,340px)]"
+                  className="relative w-[min(76vw,320px)] snap-start border-t border-white/10 pt-7 lg:w-[min(29vw,340px)]"
                 >
                   <span aria-hidden="true" className="absolute -top-[6px] left-0 h-3 w-3 rounded-full border-2 border-obsidian bg-gold-400 shadow-[0_0_20px_rgba(212,175,55,.55)]" />
                   <p className="font-mono2 text-[12px] font-semibold text-gold-400">{step.n}<span className="ml-2 text-mist-500">/ 04</span></p>

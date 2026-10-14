@@ -109,7 +109,7 @@ export default function HomeHero({ loaded = true }: { loaded?: boolean }) {
             <img
               src={portrait}
               alt="Retrato de Lester Faria"
-              className="img-apple aspect-[16/8] w-full object-cover object-top md:aspect-[21/9]"
+              className="img-apple aspect-[16/11] w-full object-cover object-top md:aspect-[21/12]"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
             <GradualBlur strength={1.75} height="clamp(3.5rem, 9vw, 7rem)" divCount={5} />
